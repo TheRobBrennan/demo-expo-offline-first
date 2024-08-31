@@ -54,56 +54,59 @@ Logs for your project will appear below. Press Ctrl+C to exit.
 Once the app is running, you should be able to scan the QR code with your phone to open the app or visit the URL in the browser - [http://localhost:8081](http://localhost:8081)in this example.
 
 Our app has the following structure:
+
+```sh
 .
 ├── README.md
-├── app
-│   ├── (tabs)
-│   │   ├── _layout.tsx
-│   │   ├── explore.tsx
-│   │   └── index.tsx
-│   ├── +html.tsx
-│   ├── +not-found.tsx
-│   └──_layout.tsx
-├── app.json
-├── assets
-│   ├── fonts
-│   │   └── SpaceMono-Regular.ttf
-│   └── images
-│       ├── adaptive-icon.png
-│       ├── favicon.png
-│       ├── icon.png
-│       ├── partial-react-logo.png
-│       ├── react-logo.png
-│       ├── <react-logo@2x.png>
-│       ├── <react-logo@3x.png>
-│       └── splash.png
-├── babel.config.js
-├── components
-│   ├── Collapsible.tsx
-│   ├── ExternalLink.tsx
-│   ├── HelloWave.tsx
-│   ├── ParallaxScrollView.tsx
-│   ├── ThemedText.tsx
-│   ├── ThemedView.tsx
-│   ├── __tests__
-│   │   ├── ThemedText-test.tsx
-│   │   └── __snapshots__
-│   │       └── ThemedText-test.tsx.snap
-│   └── navigation
-│       └── TabBarIcon.tsx
-├── constants
-│   └── Colors.ts
-├── expo-env.d.ts
-├── hooks
-│   ├── useColorScheme.ts
-│   ├── useColorScheme.web.ts
-│   └── useThemeColor.ts
-├── package-lock.json
-├── package.json
-├── scripts
-│   └── reset-project.js
-├── node_modules
-└── tsconfig.json
+├── app/                       # Main application folder
+│   ├── (tabs)/                # Contains screens and layout for tab navigation
+│   │   ├── _layout.tsx        # Layout component for tab navigation
+│   │   ├── explore.tsx        # Explore screen in tab navigation
+│   │   └── index.tsx          # Main tab screen or another tab screen
+│   ├── +html.tsx              # Handles HTML rendering or related logic
+│   ├── +not-found.tsx         # Custom 404 or "Not Found" page
+│   └──_layout.tsx            # Main layout component for the app
+├── app.json                   # Expo app configuration
+├── assets/                    # Static assets like fonts and images
+│   ├── fonts/
+│   │   └── SpaceMono-Regular.ttf
+│   └── images/
+│       ├── adaptive-icon.png
+│       ├── favicon.png
+│       ├── icon.png
+│       ├── partial-react-logo.png
+│       ├── react-logo.png
+│       ├── <react-logo@2x.png>
+│       ├── <react-logo@3x.png>
+│       └── splash.png
+├── babel.config.js            # Babel configuration
+├── components/                # Reusable UI components
+│   ├── Collapsible.tsx
+│   ├── ExternalLink.tsx
+│   ├── HelloWave.tsx
+│   ├── ParallaxScrollView.tsx
+│   ├── ThemedText.tsx
+│   ├── ThemedView.tsx
+│   ├── __tests__/             # Tests for components
+│   │   ├── ThemedText-test.tsx
+│   │   └── __snapshots__/
+│   │       └── ThemedText-test.tsx.snap
+│   └── navigation/            # Navigation-related components
+│       └── TabBarIcon.tsx
+├── constants/                 # Constants used throughout the app
+│   └── Colors.ts
+├── expo-env.d.ts              # TypeScript environment declarations for Expo
+├── hooks/                     # Custom hooks for the app
+│   ├── useColorScheme.ts
+│   ├── useColorScheme.web.ts
+│   └── useThemeColor.ts
+├── package-lock.json          # Dependency lock file
+├── package.json               # Project metadata and dependencies
+├── scripts/                   # Custom scripts for project management
+│   └── reset-project.js
+├── node_modules/              # Node.js dependencies
+└── tsconfig.json              # TypeScript configuration
+```
 
 ### Install the required packages
 
