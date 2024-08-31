@@ -1,7 +1,16 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { reducer as networkReducer } from 'react-native-offline';
+
+let AsyncStorage;
+if (typeof window !== 'undefined') {
+  AsyncStorage = require('@react-native-async-storage/async-storage').default;
+} else {
+  AsyncStorage = {
+    getItem: () => Promise.resolve(null),
+    setItem: () => Promise.resolve(),
+  };
+}
 
 const rootReducer = combineReducers({
   network: networkReducer,
