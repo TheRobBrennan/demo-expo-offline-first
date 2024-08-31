@@ -124,3 +124,30 @@ npm install @reduxjs/toolkit redux-persist redux-offline
 npm install expo-sqlite
 
 ```
+
+### Set up Redux Store with offline capabilities
+
+```sh
+# Create a Redux store
+mkdir -p app/store
+touch app/store/index.ts
+
+```
+
+### Integrate Network State Management
+
+```sh
+# Create a Network Provider
+mkdir -p app/network
+touch app/network/NetworkProvider.tsx
+
+```
+
+### Set Up API Handling with Offline Caching
+
+```sh
+# Create a new API service
+mkdir -p app/api
+touch app/api/api.ts
+
+```
