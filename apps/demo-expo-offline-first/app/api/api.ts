@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetworkStatus } from '../network/NetworkProvider';
 
 const api = axios.create({
-  baseURL: 'https://api.yourservice.com',
+  baseURL: 'https://jsonplaceholder.typicode.com', // Public API endpoint
 });
 
 api.interceptors.request.use(
@@ -11,11 +11,9 @@ api.interceptors.request.use(
     const isConnected = useNetworkStatus();
 
     if (!isConnected) {
-      // Set a custom flag for offline mode
+      // Set a custom flag to handle offline mode in the response interceptor
       config.headers['X-Offline-Mode'] = 'true';
-      // Store the cached data in the config for later use
-      const cachedData = await AsyncStorage.getItem(config.url!);
-      config.data = cachedData ? JSON.parse(cachedData) : null;
+      config.headers['X-Cached-Url'] = config.url;
     }
 
     return config;
@@ -23,7 +21,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Modify the response interceptor to handle offline mode
 api.interceptors.response.use(
   async (response) => {
     const isConnected = useNetworkStatus();
@@ -31,23 +28,25 @@ api.interceptors.response.use(
     if (isConnected) {
       // Cache successful responses
       await AsyncStorage.setItem(response.config.url!, JSON.stringify(response.data));
+    } else if (response.config.headers['X-Offline-Mode']) {
+      // Handle offline mode, read from cache
+      const cachedUrl = response.config.headers['X-Cached-Url'];
+      const cachedData = await AsyncStorage.getItem(cachedUrl);
+      if (cachedData) {
+        return {
+          ...response,
+          data: JSON.parse(cachedData),
+          status: 200,
+          statusText: 'OK (Offline)',
+        };
+      } else {
+        throw new Error('No cached data available');
+      }
     }
 
     return response;
   },
-  async (error) => {
-    if (error.config.headers['X-Offline-Mode'] === 'true') {
-      // Return cached data as a successful response
-      return {
-        data: error.config.data,
-        status: 200,
-        statusText: 'OK (Offline)',
-        headers: {},
-        config: error.config,
-      };
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default api;

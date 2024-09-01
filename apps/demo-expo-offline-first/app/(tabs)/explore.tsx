@@ -1,17 +1,38 @@
+import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StyleSheet, Image, Platform, View, Text, FlatList } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import api from '../api/api';  // Importing the API setup
 
 export default function TabTwoScreen() {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await api.get('/users'); // Fetching posts from JSONPlaceholder
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
+      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}
+    >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
@@ -30,6 +51,26 @@ export default function TabTwoScreen() {
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
       </Collapsible>
+      
+      <Collapsible title="API Data (With Caching)">
+        {loading ? (
+          <ThemedText>Loading...</ThemedText>
+        ) : (
+          <></>
+          // <FlatList
+          //   data={data}
+          //   keyExtractor={(item) => item.id.toString()}
+          //   renderItem={({ item }) => (
+          //     <View style={{ padding: 10 }}>
+          //       {/* <Text style={{ fontWeight: 'bold' }}>{item.title}</Text>
+          //       <Text>{item.body}</Text> */}
+          //       <pre>{JSON.stringify(item, null, 2)}</pre>
+          //     </View>
+          //   )}
+          // />
+        )}
+      </Collapsible>
+      
       <Collapsible title="Android, iOS, and web support">
         <ThemedText>
           You can open this project on Android, iOS, and the web. To open the web version, press{' '}
