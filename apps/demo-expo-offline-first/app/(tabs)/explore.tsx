@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform, View, Text, FlatList } from 'react-native';
+import { StyleSheet, Image, Platform, View, Text } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 
 import { Collapsible } from '@/components/Collapsible';
@@ -13,12 +13,12 @@ import { fetchWithCache } from '../api/api';
 export default function TabTwoScreen() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const netInfo = useNetInfo();  // Get network status using @react-native-community/netinfo
+  const netInfo = useNetInfo();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetchWithCache('/users', netInfo.isConnected ?? false); // Fetch data with cache support
+        const response = await fetchWithCache('/users', netInfo.isConnected ?? false);
         console.log('Data received:', response);
         setData(response);
       } catch (error) {
@@ -31,7 +31,7 @@ export default function TabTwoScreen() {
     if (netInfo.isConnected !== null) {
       fetchData();
     }
-  }, [netInfo.isConnected]);  // Re-fetch data if network status changes
+  }, [netInfo.isConnected]);
 
   return (
     <ParallaxScrollView
@@ -47,18 +47,16 @@ export default function TabTwoScreen() {
         {loading ? (
           <ThemedText>Loading...</ThemedText>
         ) : (
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={{ padding: 10 }}>
+          <View>
+            {data.map((item) => (
+              <View key={item.id.toString()} style={{ padding: 10 }}>
                 <Text style={{ fontWeight: 'bold', color: 'white' }}>{item.name}</Text>
               </View>
-            )}
-          />
+            ))}
+          </View>
         )}
       </Collapsible>
-      
+
       <Collapsible title="Android, iOS, and web support">
         <ThemedText>
           You can open this project on Android, iOS, and the web. To open the web version, press{' '}
