@@ -29,17 +29,11 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      {typeof window !== 'undefined' ? (
-        <PersistGate loading={null} persistor={persistor}>
-          <AppNetworkProvider>
-            <AppNavigator />
-          </AppNetworkProvider>
-        </PersistGate>
-      ) : (
+      <PersistGate loading={null} persistor={persistor}>
         <AppNetworkProvider>
           <AppNavigator />
         </AppNetworkProvider>
-      )}
+      </PersistGate>
     </Provider>
   );
 }

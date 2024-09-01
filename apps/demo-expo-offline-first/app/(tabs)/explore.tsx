@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Image, Platform, View, Text, FlatList } from 'react-native';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import api from '../api/api';  // Importing the API setup
+import { fetchWithCache } from '../api/api';
 
 export default function TabTwoScreen() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const netInfo = useNetInfo();  // Get network status using @react-native-community/netinfo
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await api.get('/users'); // Fetching posts from JSONPlaceholder
-        setData(response.data);
+        const response = await fetchWithCache('/users', netInfo.isConnected ?? false); // Fetch data with cache support
+        console.log('Data received:', response);
+        setData(response);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -25,8 +28,10 @@ export default function TabTwoScreen() {
       }
     }
 
-    fetchData();
-  }, []);
+    if (netInfo.isConnected !== null) {
+      fetchData();
+    }
+  }, [netInfo.isConnected]);  // Re-fetch data if network status changes
 
   return (
     <ParallaxScrollView
@@ -37,37 +42,20 @@ export default function TabTwoScreen() {
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
       <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
       
       <Collapsible title="API Data (With Caching)">
         {loading ? (
           <ThemedText>Loading...</ThemedText>
         ) : (
-          <></>
-          // <FlatList
-          //   data={data}
-          //   keyExtractor={(item) => item.id.toString()}
-          //   renderItem={({ item }) => (
-          //     <View style={{ padding: 10 }}>
-          //       {/* <Text style={{ fontWeight: 'bold' }}>{item.title}</Text>
-          //       <Text>{item.body}</Text> */}
-          //       <pre>{JSON.stringify(item, null, 2)}</pre>
-          //     </View>
-          //   )}
-          // />
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View style={{ padding: 10 }}>
+                <Text style={{ fontWeight: 'bold', color: 'white' }}>{item.name}</Text>
+              </View>
+            )}
+          />
         )}
       </Collapsible>
       
@@ -77,38 +65,40 @@ export default function TabTwoScreen() {
           <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
         </ThemedText>
       </Collapsible>
+      
       <Collapsible title="Images">
         <ThemedText>
           For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
           <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
+          different screen densities.
         </ThemedText>
         <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
         <ExternalLink href="https://reactnative.dev/docs/images">
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
       </Collapsible>
+      
       <Collapsible title="Custom fonts">
         <ThemedText>
           Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
+          <ThemedText style={{ fontFamily: 'SpaceMono' }}>custom fonts such as this one.</ThemedText>
         </ThemedText>
         <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
       </Collapsible>
+      
       <Collapsible title="Light and dark mode components">
         <ThemedText>
           This template has light and dark mode support. The{' '}
           <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
+          what the user's current color scheme is, so you can adjust UI colors accordingly.
         </ThemedText>
         <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
       </Collapsible>
+      
       <Collapsible title="Animations">
         <ThemedText>
           This template includes an example of an animated component. The{' '}
